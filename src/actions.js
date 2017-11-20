@@ -10,10 +10,6 @@ export function signUp(fullname, lastname, email, pass) {
             fullname, lastname, email, pass
         }
         database.ref('users/' + user.uid).set(newuser);
-
-        // database.ref ('users/' + user.uid + '/options').update ( 'option1, option2, option3...');   
-        //  database.ref ('users/').push (newuser);   
-
         database.ref('users/' + user.uid).once('value').then(res => {
             const fullUserInfo = res.val();
 
@@ -67,25 +63,24 @@ export function signIn(user, pass) {
 }
 
 export const userchange = () => {
-    firebase.auth().onAuthStateChanged(usuario => {
-        if (usuario) {
-            console.log('si');
-            firebase.database().ref('users/' + usuario.uid).once('value').then(res => {
+    firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+            console.log('se registró');
+            firebase.database().ref('users/' + user.uid).once('value').then(res => {
                 const fullUserInfo = res.val();
                 store.setState({
                     user: {
-                        id: 'users/' + usuario.uid,
+                        id: 'users/' + user.uid,
                         fullname: fullUserInfo.fullName,
                         lastName: fullUserInfo.lastName
                     },
                     successLogin: true
                 })
                 console.log('fullinfo', fullUserInfo);
-
             })
-            readBoard('users/' + usuario.uid);
+            readBoard('users/' + user.uid);
         } else {
-            console.log('no')
+            console.log('identificacion del usuario')
         }
     });
 }
@@ -110,46 +105,27 @@ export function readBoard(user) {
         })
         console.log(stages);
         store.setState({
-            boards: stages
+            board: stages
         })
     });
 }
 
+/*----------------------------Add board-------------------------------------- */
+
 export const addComment = (value) => {
     let user = store.getState().user;
-    let boards = [...store.getState().boards];
+    let boards = [...store.getState().board];
+    const change = store.getState().showReply;
+    const newState = !change;
     console.log(value);
     let newBoard = {
         name: value,
         id: boards.length + '-' + value
     }
-    firebase.database().ref(user.id + '/boards/' + newBoard.id).set(newBoard).then(() => console.log('nooo'));
-}
-
-/*----------------------------Add board-------------------------------------- */
-
-/* export const addComment = (name) => {
-    let oldList = store.getState().board;
-    const change = store.getState().showReply;
-    const newState = !change;
-    const newList = oldList.concat({
-        id: oldList.length,
-        name: name,
-        cards:[],
-        toggle: false
-    });
+    firebase.database().ref(user.id + '/boards/' + newBoard.id).set(newBoard).then(() => console.log('data firebase!!'));
     store.setState({
-        board: newList,
         showReply: newState
     });
-
-    console.log(newList);
-}; */
-
-export const setView = (index) => {
-    store.setState({
-        idBoard: index
-    })
 }
 
 export const handleLoginClick = () => {

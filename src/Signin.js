@@ -1,5 +1,7 @@
 import React from 'react';
 import { NavLink, Redirect } from 'react-router-dom';
+import { connect } from 'redux-zero/react';
+import Footer from './Footer';
 import { signIn} from './actions'
 import './App.css';
 
@@ -37,9 +39,11 @@ const InitPage = ({ successLogin }) => {
 
 const Signin = ({ successLogin }) => {
     return (
-        <div>
-            <InitPage successLogin={successLogin}/>
+        <div id='main_container'>
+            <InitPage successLogin={successLogin} />
+            <Footer />
         </div>)
 }
 
-export default Signin;
+const mapToProps = ({ successLogin }) => ({ successLogin });
+export default connect(mapToProps)(Signin);

@@ -4,13 +4,13 @@ import './App.css';
 import Header from './Header'
 import Footer from './Footer'
 import { NavLink } from 'react-router-dom';
-import { addComment, setView, handleLoginClick, handleLogoutClick} from './actions';
+import { addComment, handleLoginClick, handleLogoutClick} from './actions';
 
-const User = ({name, ide, index}) => {
+const User = ({ ide, name, linkuser, index}) => {
 	return (
     <div id={ide} className="board">
 		<div className="inner">
-        <h4><NavLink onClick={()=>{setView(index)}} to={"/details"}>{name}</NavLink></h4>
+            <h4><NavLink to={linkuser}>{name}</NavLink></h4>
 		</div>
     </div>
 	);
@@ -91,10 +91,12 @@ const boardComponent =  board.map ( (item, index) => {
     const tall = item.name;
     const guion = "-";
     const res = count.concat(guion,tall);
+    const path = "/boards/" + (index + 1) + '-' + item.name;
     return <User
         key = {index}
-        name={item.name}
         ide={res}
+        name={item.name}
+        linkuser={path}
         index={index}
        />
   })
