@@ -84,7 +84,7 @@ const LoginButton = ({ showReply }) => {
 }
 
 
-const Boards = ({ board, tboard, showReply }) => {
+const Boards = ({ board, tboard, showReply, successLogin, user}) => {
 
 const boardComponent =  board.map ( (item, index) => {
     const count = (item.id).toString();
