@@ -2,12 +2,12 @@ import store from './store';
 /* import firebase from "firebase"; */
 import { auth, database } from './firebase';
 
-export function signUp(fullname, email, pass) {
-    console.log('signUp' + fullname + email + pass);
+export function signUp(fullname, lastname, email, pass) {
+    console.log('signUp' + fullname + lastname + email + pass);
 
     auth.createUserWithEmailAndPassword(email, pass).then(user => {
         let newuser = {
-            fullname, email, pass
+            fullname, lastname, email, pass
         }
         database.ref('users/' + user.uid).set(newuser);
 
