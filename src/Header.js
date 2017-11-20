@@ -1,10 +1,15 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { connect } from 'redux-zero/react'
+import { NavLink, Redirect } from 'react-router-dom';
+import { signOut } from './actions'
 import './App.css';
 
-const Header= () => {
+const Header = ({ successLogin, user }) => {
     return (
         <header className="main-header">
+            {
+                !successLogin && <Redirect to="/signin" />
+            }
             <nav id="boards_nav">
                 <ul>
                     <li>
@@ -23,7 +28,7 @@ const Header= () => {
                         </a>
                     </li>
                     <li>
-                        <NavLink to={"/signin"}><i className="fa fa-sign-out"></i><span> Sign out</span></NavLink>
+                        <a onClick={signOut}><i className="fa fa-sign-out"></i><span> Sign out</span></a>
                     </li>
                 </ul>
             </nav>
@@ -31,4 +36,5 @@ const Header= () => {
     );
 }
 
-export default Header;
+const mapToProps = ({ successLogin, user }) => ({ successLogin, user })
+export default connect(mapToProps)(Header);
