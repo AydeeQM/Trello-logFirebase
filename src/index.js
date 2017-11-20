@@ -6,7 +6,8 @@ import Register from './Signup';
 import Boards from './Boards';
 import DetaBoards from './Detailsboard';
 import { Provider } from 'redux-zero/react'
-import store from './store'
+import store from './store';
+import { userchange } from './actions';
 import registerServiceWorker from './registerServiceWorker';
 import { HashRouter, Switch, Route } from 'react-router-dom'
 
@@ -24,6 +25,8 @@ const Index = () => (
         </HashRouter>
     </Provider>
 )
+
+userchange();
 
 ReactDOM.render(<Index />, document.getElementById('main_container'));
 registerServiceWorker();

@@ -4,6 +4,7 @@ import { board, tboard } from './Databoards'
 const initialState = {
     board: board,
     tboard: tboard,
+    user: '',
     idBoard: 0,
     showReply: false
 };

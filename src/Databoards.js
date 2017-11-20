@@ -1,5 +1,5 @@
 export const board = [
-    {
+    /* {
         id: 0,
         name: 'Tes Board',
         cards: [
@@ -100,7 +100,7 @@ export const board = [
             }
         ],
         toggle: false
-    }
+    }*/
 ];
 
 export const tboard = [

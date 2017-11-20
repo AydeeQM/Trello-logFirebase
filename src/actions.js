@@ -1,5 +1,5 @@
 import store from './store';
-/* import firebase from "firebase"; */
+import firebase from "firebase";
 import { auth, database } from './firebase';
 
 export function signUp(fullname, lastname, email, pass) {
@@ -66,8 +66,30 @@ export function signIn(user, pass) {
     })
 }
 
+export const userchange = () => {
+    firebase.auth().onAuthStateChanged(usuario => {
+        if (usuario) {
+            console.log('si');
+            firebase.database().ref('users/' + usuario.uid).once('value').then(res => {
+                const fullUserInfo = res.val();
+                store.setState({
+                    user: {
+                        id: 'users/' + usuario.uid,
+                        fullname: fullUserInfo.fullName,
+                        lastName: fullUserInfo.lastName
+                    },
+                    successLogin: true
+                })
+                console.log('fullinfo', fullUserInfo);
 
-auth.onAuthStateChanged(user => {
+            })
+            readBoard('users/' + usuario.uid);
+        } else {
+            console.log('no')
+        }
+    });
+}
+/* auth.onAuthStateChanged(user => {
     if (user) {
         console.log('user', user);
         let usersRef = database.ref('/users');
@@ -76,11 +98,37 @@ auth.onAuthStateChanged(user => {
             successLogin: true
         })
     }
-});
+}); */
+
+/* --------------------boards firebase----------------------- */
+export function readBoard(user) {
+    firebase.database().ref(user + '/boards').on('value', res => {
+        let stages = [];
+        res.forEach(snap => {
+            const stage = snap.val();
+            stages.push(stage);
+        })
+        console.log(stages);
+        store.setState({
+            boards: stages
+        })
+    });
+}
+
+export const addComment = (value) => {
+    let user = store.getState().user;
+    let boards = [...store.getState().boards];
+    console.log(value);
+    let newBoard = {
+        name: value,
+        id: boards.length + '-' + value
+    }
+    firebase.database().ref(user.id + '/boards/' + newBoard.id).set(newBoard).then(() => console.log('nooo'));
+}
 
 /*----------------------------Add board-------------------------------------- */
 
-export const addComment = (name) => {
+/* export const addComment = (name) => {
     let oldList = store.getState().board;
     const change = store.getState().showReply;
     const newState = !change;
@@ -96,7 +144,7 @@ export const addComment = (name) => {
     });
 
     console.log(newList);
-};
+}; */
 
 export const setView = (index) => {
     store.setState({
@@ -116,7 +164,15 @@ export const handleLogoutClick = () =>  {
 }
 
 /********************** Lista de board *********************************/
-export const addList = (selected, name) => {
+export const addList = (value, board) => {
+    let user = store.getState().user;
+    let list = board.list ? board.list : [];
+    list.push({ name: value });
+    firebase.database().ref(user.id + '/boards/' + board.id + '/list').set(list).then(() => console.log('lol'));
+
+}
+
+/* export const addList = (selected, name) => {
     let oldList = [...store.getState().board];
     oldList[selected].toggle = false;
     oldList[selected].cards.push({
@@ -128,7 +184,7 @@ export const addList = (selected, name) => {
         board: oldList,
     });
 
-};
+}; */
 
 export const handleHideClick = (selected) => {
     let oldList = [...store.getState().board];
@@ -149,7 +205,24 @@ export const handleShowClick = (selected) => {
 }
 
 /********************* add works Comments ******************************/
-export const addTodo = (selected, index, todocoment) => {
+export const addTodo = (value, board, list) => {
+    let user = store.getState().user;
+    let newList = board.list.map(b => {
+        if (b.name === list) {
+            if (b.cards) {
+                b.cards.push(value);
+            } else {
+                b.cards = [value];
+            }
+        }
+        return b;
+    });
+
+    firebase.database().ref(user.id + '/boards/' + board.id + '/list').set(newList).then(() => console.log('sip'));
+
+}
+
+/* export const addTodo = (selected, index, todocoment) => {
     let oldList = [...store.getState().board];
     oldList[selected].cards[index].todostado = false;
     oldList[selected].cards[index].commit.push(todocoment);
@@ -157,7 +230,7 @@ export const addTodo = (selected, index, todocoment) => {
     store.setState({
         board: oldList,
     });
-};
+}; */
 
 export const TodoHideClick = (selected, index) => {
     let oldList = [...store.getState().board];
