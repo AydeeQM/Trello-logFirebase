@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'redux-zero/react';
-import './App.css';
+import './css/body.css';
 import Header from './Header';
 import Footer from './Footer';
 import { NavLink, Redirect} from 'react-router-dom';

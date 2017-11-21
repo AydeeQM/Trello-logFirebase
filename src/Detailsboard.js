@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'redux-zero/react';
-import './App.css';
+import './css/body.css';
 import Header from './Header'
 import Footer from './Footer'
 import { addStage, handleShowClick, handleHideClick, addTask, TodoHideClick, TodoShowClick } from './actions';
@@ -71,7 +71,7 @@ class Stage extends React.Component {
                     {list}
                     <footer>
                         <TodoShow stageID={this.props.stageId} dataCard={this.taskInputReference} selected={this.props.todostado} />
-                        <TodoHide selected={this.props.todostado} />
+                        {/* <TodoHide selected={this.props.todostado} /> */}
                     </footer>
                 </div>
             </div>
@@ -145,8 +145,8 @@ class Board extends React.Component {
                                     <div className="canvas">
                                         <div className="lists-wrapper">
                                             {list}
-                                            {stages.toggle === false && <LogoutButton selected={this.props.toggle} />}
-                                            {stages.toggle === true &&<LoginButton dataList={this.refInput} boardId={boardId} selected={this.props.toggle} />}
+                                            {/* <LogoutButton selected={this.props.toggle} /> */}
+                                            <LoginButton dataList={this.refInput} boardId={boardId} selected={this.props.toggle} />
                                         </div>
                                     </div>
                                 </div>

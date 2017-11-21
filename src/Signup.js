@@ -3,7 +3,7 @@ import { NavLink, Redirect } from 'react-router-dom';
 import { connect } from 'redux-zero/react';
 import { signUp } from './actions'
 import Footer from './Footer';
-import './App.css';
+import './css/body.css';
 
 const SecondView = ({ successLogin }) => {
     return (

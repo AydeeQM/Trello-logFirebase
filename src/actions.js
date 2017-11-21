@@ -3,7 +3,6 @@ import firebase from "firebase";
 import { auth, database } from './firebase';
 
 export function signUp(fullname, lastname, email, pass) {
-    //console.log('signUp' + fullname + lastname + email + pass);
 
     auth.createUserWithEmailAndPassword(email, pass).then(user => {
         let newuser = {
@@ -117,7 +116,6 @@ export function addStage(text, board_id) {
         toggle:false
     }
     console.log('stage', newobj)
-
     database.ref('stages').push(newobj);
 }
 
@@ -146,20 +144,26 @@ export function addStage(text, board_id) {
 
 }; */
 
-export const handleHideClick = (selected) => {
-    let oldList = [...store.getState().board];
+export const handleHideClick = (id) => {
+    firebase.database().ref('stages/' + id).once('value').then(res => {
+        console.log('valores de listaHide',res.val())
+    });
+/*     let oldList = [...store.getState().board];
     oldList[selected].toggle = true;
     store.setState({
         board: oldList
-    })
+    }) */
 }
 
-export const handleShowClick = (selected) => {
-    let oldList = [...store.getState().board];
+export const handleShowClick = (id) => {
+    firebase.database().ref('stages/' + id).once('value').then(res => {
+        console.log('valores de listaShow', res.val())
+    });
+/*     let oldList = [...store.getState().board];
     oldList[selected].toggle = false;
     store.setState({
         board: oldList
-    })
+    }) */
     /* let bolean = store.getState().toggle ? false : true;
     store.setState({ toggle: bolean}); */
 }

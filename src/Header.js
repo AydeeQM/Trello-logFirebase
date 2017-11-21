@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'redux-zero/react'
 import { NavLink, Redirect } from 'react-router-dom';
 import { signOut } from './actions'
-import './App.css';
+import './css/body.css';
 
 const Header = ({ successLogin, user }) => {
     return (
