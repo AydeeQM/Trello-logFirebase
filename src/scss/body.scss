@@ -103,7 +103,6 @@ input[type="submit"] {
     /* 3 */
 }
 
-
 button[disabled],
 html input[disabled] {
     cursor: default;
@@ -282,79 +281,71 @@ form .error,
     padding: 0 1.5em;
     color: #fff;
     position: relative;
-}
+     &::after {
+        clear: both;
+        content: "";
+        display: block;
+    }
+    .logo {
+        transform: translate(-50%, -50%);
+        display: inline-block;
+        background: url('../images/logo.png') 0 0 no-repeat;
+        background-size: contain;
+        height: 32px;
+        width: 110px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+    }
+    nav {
+        float: left;
+        margin: 0;
+        padding: 0;
+        &.right {
+            float: right;
+        }
+        ul {
+            list-style: none;
+            display: inline-block;
+            margin: 0;
+            li {
+                display: inline-block;
+                a {
+                    transition: all 0.15s ease-out 0s;
+                    color: rgba(255, 255, 255, 0.5);
+                    background: rgba(255, 255, 255, 0.15);
+                    border-radius: 3px;
+                    padding: 0.3em 0.5em;
+                    line-height: 1em;
+                    &.current-user {
+                        position: relative;
+                        overflow: hidden;
+                        padding-left: 35px;
+                        margin-right: 0.5em;
+                        .react-gravatar {
+                            width: 30px;
+                            height: 30px;
+                            border-radius: 3px;
+                            margin-right: 0.5em;
+                            position: absolute;
+                            top: 50%;
+                            margin-top: -15px;
+                            left: 0;
+                        }
+                    }
+                    .fa {
+                        color: #fff;
+                    }
+                    &:hover {
+                        color: #fff;
+                    }
+                }
+            }
+        }
+    }
 
-.main-header::after {
-    clear: both;
-    content: "";
-    display: block;
-}
 
-.main-header .logo {
-    transform: translate(-50%, -50%);
-    display: inline-block;
-    background: url('../images/logo.png') 0 0 no-repeat;
-    background-size: contain;
-    height: 32px;
-    width: 110px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-}
 
-.main-header nav {
-    float: left;
-    margin: 0;
-    padding: 0;
-}
-
-.main-header nav.right {
-    float: right;
-}
-
-.main-header nav ul {
-    list-style: none;
-    display: inline-block;
-    margin: 0;
-}
-
-.main-header nav ul li {
-    display: inline-block;
-}
-
-.main-header nav ul li a {
-    transition: all 0.15s ease-out 0s;
-    color: rgba(255, 255, 255, 0.5);
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 3px;
-    padding: 0.3em 0.5em;
-    line-height: 1em;
-}
-
-.main-header nav ul li a.current-user {
-    position: relative;
-    overflow: hidden;
-    padding-left: 35px;
-    margin-right: 0.5em;
-}
-
-.main-header nav ul li a.current-user .react-gravatar {
-    width: 30px;
-    height: 30px;
-    border-radius: 3px;
-    margin-right: 0.5em;
-    position: absolute;
-    top: 50%;
-    margin-top: -15px;
-    left: 0;
-}
-
-.main-header nav ul li a .fa {
-    color: #fff;
-}
-
-.main-header nav ul li a:hover {
-    color: #fff;
 }
 
 .main-header nav#boards_nav>ul>li {
