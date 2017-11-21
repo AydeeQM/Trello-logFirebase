@@ -3,9 +3,27 @@ import { connect } from 'redux-zero/react';
 import './App.css';
 import Header from './Header'
 import Footer from './Footer'
-import { addList, handleShowClick, handleHideClick, addTodo, TodoHideClick, TodoShowClick } from './actions';
+import { addStage, handleShowClick, handleHideClick, addTask, TodoHideClick, TodoShowClick } from './actions';
+import { board } from './Databoards';
 
 /* -----------------Agregar Comentarios--------------------------- */
+const Task = ({ title }) => (
+    <div className="cards-wrapper">
+        <div className="card">
+            <div className="card-content">
+                <div className="tags-wrapper" >
+                    <span>  {title} </span>
+                </div>
+                <footer>
+                    <small>
+                        <i className="fa fa-comment-o"></i><span></span><span>1</span>
+                    </small>
+                    <img alt="Gravatar for john@phoenix-trello.com" src="//www.gravatar.com/avatar/6a88cfcf7b76267b129b8dc477c4105e?d=retro&amp;r=g&amp;s=50" height="50" width="50" className="react-gravatar react-gravatar" />
+                </footer>
+            </div>
+        </div>
+    </div>
+);
 
 const TodoHide = ({selected, index }) => {
     return (
@@ -13,14 +31,14 @@ const TodoHide = ({selected, index }) => {
     )
 }
 
-const TodoShow= ({selected, index}) => {
+const TodoShow = ({stageID, dataCard, selected }) => {
     const onSubmit = e => {
         e.preventDefault();
-        if (this.refInput.value) {
-            addTodo(selected, index, this.refInput.value);
-            this.refInput.value = '';
+        if (dataCard.value) {
+            console.log('this.taskInputRef.value', dataCard.value)
+            addTask(stageID, dataCard.value);
+            dataCard.value = '';
         }
-
     };
     return (
         <div className="list form">
@@ -28,8 +46,8 @@ const TodoShow= ({selected, index}) => {
                 <h4>New board</h4>
                 <div className="card form">
                     <form onSubmit={onSubmit} id="new_card_form">
-                        <textarea type="text" required="" ref={e => (this.refInput = e)}></textarea>
-                        <button type="submit">Add</button><span> or </span><a onClick={() => TodoShowClick(selected, index)}>cancel</a>
+                        <textarea type="text" required="" ref={e => (dataCard = e)}></textarea>
+                        <button type="submit">Add</button><span> or </span><a onClick={() => TodoShowClick(selected)}>cancel</a>
                     </form>
                 </div>
             </div>
@@ -39,36 +57,26 @@ const TodoShow= ({selected, index}) => {
 }
 
 /* --------------------------------------------**---------------------------------------------------------------- */
-
-const User = ({ title, evalue, board, index, selected}) => {
-    return (
-        <div key={index} className="list">
-            <div className="inner">
-                <header><h4>{title}</h4></header>
-                <div className="cards-wrapper">
-                    {board.commit.map((comment, i) => {
-                        return <div key={i}  className="card">
-                            <div className="card-content">
-                                <div className="tags-wrapper" >
-                                    <span>{comment}</span>
-                                </div>
-                                <footer>
-                                    <small>
-                                        <i className="fa fa-comment-o"></i><span></span><span>1</span>
-                                    </small>
-                                    <img alt="Gravatar for john@phoenix-trello.com" src="//www.gravatar.com/avatar/6a88cfcf7b76267b129b8dc477c4105e?d=retro&amp;r=g&amp;s=50" srcset="//www.gravatar.com/avatar/6a88cfcf7b76267b129b8dc477c4105e?d=retro&amp;r=g&amp;s=100 2x" height="50" width="50" className="react-gravatar react-gravatar" />
-                                </footer>
-                            </div>
-                        </div>
-                    })}
+class Stage extends React.Component {
+    render() {
+        let list = null;
+        if (this.props.tasks)
+            list = this.props.tasks.map(task => {
+                return <Task key={task.id} title={task.title} />
+            })
+        return (
+            <div className="list">
+                <div className="inner">
+                    <header><h4>{this.props.title}</h4></header>
+                    {list}
+                    <footer>
+                        <TodoShow stageID={this.props.stageId} dataCard={this.taskInputReference} selected={this.props.todostado} />
+                        <TodoHide selected={this.props.todostado} />
+                    </footer>
                 </div>
-                <footer>
-                    {evalue === false && <TodoHide selected={selected} index={index} />}
-                    {evalue === true && <TodoShow selected={selected} index={index} /> }
-                </footer>
             </div>
-        </div>
-    );
+        )
+    }
 }
 
 /* ***************************Agregar lista de tareas****************************** */
@@ -78,12 +86,12 @@ const LogoutButton = ({selected}) => {
     )
 }
 
-const LoginButton = ({selected}) => {
+const LoginButton = ({ dataList, boardId, selected }) => {
     const onSubmit = e => {
         e.preventDefault();
-        if (this.refInput.value) {
-            addList(selected, this.refInput.value);
-            this.refInput.value = '';
+        if (dataList.value) {
+            addStage(dataList.value, boardId);
+            dataList.value = '';
         }
 
     };
@@ -99,7 +107,7 @@ const LoginButton = ({selected}) => {
                             name="name"
                             placeholder="Add a new list..." 
                             required="" 
-                            ref={e => (this.refInput = e)}
+                            ref={e => (dataList = e)}
                         />
                         <button type="submit">Save list</button>
                         <span> or </span>
@@ -112,54 +120,63 @@ const LoginButton = ({selected}) => {
 
 }
 
-/* ********************************************************************************** */
+/* ***********************************ADD List and Cards*********************************************** */
+class Board extends React.Component {
+    render() {
+        const { title, boardId, stages, tasks, toggle } = this.props;
 
-const DetaBoards = ({ board, idBoard, index}) => {
-
-    const boardComponent = board[idBoard].cards.map((item, index) => {
-        return <User
-            key={index}
-            title={item.name}
-            evalue={item.todostado}
-            index={index}
-            board={item}
-            selected={idBoard}
-            
-        />
-    })
-
-    return (
-        <div id='main_container'>
-            <div>
-                <div id='authentication_container' className='application-container'>
-                    <Header />
-                    <div className='main-container'>
-                        <div className="view-container boards show">
+        let list = null;
+        if (stages)
+            list = stages.map(stage => {
+                return <Stage key={stage.id} title={stage.title} stageId={stage.id}
+                    tasks={tasks == null ? null : tasks.filter(task => task.stageId === stage.id)}
+                />
+            });
+        return (
+                <div>
+                    <div id='authentication_container' className='application-container'>
+                        <Header />
+                        <div className='main-container'>
+                            <div className="view-container boards show">
                                 <header className="view-header" >
-                                <h3>{board[idBoard].name}</h3>
+                                    <h3>{title}</h3>
                                 </header>
                                 <div className="canvas-wrapper">
                                     <div className="canvas">
                                         <div className="lists-wrapper">
-                                            {boardComponent}
-                                            {
-                                            board[idBoard].toggle === false && <LogoutButton selected={idBoard} />
-                                            }
-                                            {
-                                            board[idBoard].toggle === true && <LoginButton selected={idBoard} /> 
-                                            }
-                                            
+                                            {list}
+                                            {stages.toggle === false && <LogoutButton selected={this.props.toggle} />}
+                                            {stages.toggle === true &&<LoginButton dataList={this.refInput} boardId={boardId} selected={this.props.toggle} />}
                                         </div>
                                     </div>
                                 </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <Footer />
-        </div>
-    );
-};
+        );
+    }
+}
 
-const mapToProps = ({ board, idBoard, index}) => ({ board, idBoard, index});
-export default connect(mapToProps)(DetaBoards);
+const TrelloApp = ({ boards, title, boardId, stages, tasks, toggle}) => {
+    let list = null;
+    if (boards)
+        list = boards.map(board => {
+            return <Board key={board.id}
+                title={board.title}
+                boardId={board.id}
+                stages={stages == null ? null :
+                    stages.filter(e => e.board_id == board.id)}
+                tasks={tasks} />
+        }) 
+    return (
+    <div id='main_container' >
+        {list}
+        <Footer />
+    </div>
+
+    ) 
+
+};
+const mapToProps = ({ boards, title, boardId, stages, tasks}) => ({boards, title, boardId, stages, tasks })
+export default connect(mapToProps)(TrelloApp);

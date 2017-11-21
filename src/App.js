@@ -7,7 +7,7 @@ import DetaBoards from './Detailsboard';
 import { HashRouter, Switch, Route } from 'react-router-dom'
 import { connect } from 'redux-zero/react';
 
-const App = ({ board }) => {
+const App = ({ successLogin, user}) => {
   return (
     <HashRouter>
       <Switch>
@@ -15,17 +15,12 @@ const App = ({ board }) => {
         <Route path="/signin" component={Signin} />
         <Route path="/signup" component={Register} />
         <Route path="/boards" component={Boards} />
-        {
-          board.map((item, index) => {
-            const path = "/boards/" + (index + 1) + '-' + item.name;
-            return <Route path={path} component={DetaBoards} />
-          })
-        }
+        <Route path="/details" component={DetaBoards} />
       </Switch>
     </HashRouter>
   )
 }
 
-const mapToProps = ({ board }) => ({ board });
+const mapToProps = ({ successLogin, user }) => ({ successLogin, user });
 export default connect(mapToProps)(App);
 

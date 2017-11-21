@@ -1,27 +1,16 @@
 import React from 'react';
 import { connect } from 'redux-zero/react';
 import './App.css';
-import Header from './Header'
-import Footer from './Footer'
-import { NavLink } from 'react-router-dom';
-import { addComment, handleLoginClick, handleLogoutClick} from './actions';
-
-const User = ({ ide, name, linkuser, index}) => {
-	return (
-    <div id={ide} className="board">
-		<div className="inner">
-            <h4><NavLink to={linkuser}>{name}</NavLink></h4>
-		</div>
-    </div>
-	);
-}
+import Header from './Header';
+import Footer from './Footer';
+import { NavLink, Redirect} from 'react-router-dom';
+import { setView, addNewBoard, handleLoginClick, handleLogoutClick} from './actions';
 
 const Usertwo = ({tboard}) => {
     return (
     <section>
         <header className="view-header">
-            <h3><i className="fa fa-users"></i><span> Other boards</span>
-            </h3>
+            <h3><i className="fa fa-users"></i><span> Other boards</span></h3>
         </header>
         <div className='boards-wrapper'>
             {
@@ -50,12 +39,12 @@ const LogoutButton = ({showReply}) => {
     )
 }
 
-const LoginButton = ({ showReply }) => {
+const LoginButton = ({ databoard, userID, showReply }) => {
     const onSubmit = e => {
         e.preventDefault();
-        if (this.refInput.value) {
-            addComment(this.refInput.value);
-            this.refInput.value = '';
+        if (databoard.value) {
+            addNewBoard(databoard.value, userID)
+            databoard.value = '';
         }
 
     };
@@ -70,7 +59,7 @@ const LoginButton = ({ showReply }) => {
                                 id="board_name"
                                 name="name"
                                 placeholder="User"
-                                ref={e => (this.refInput = e)}
+                                ref={e => (databoard = e)}
                             />
                             <button type="submit" name="submit">Create board</button>
                             <span> or </span>
@@ -83,50 +72,48 @@ const LoginButton = ({ showReply }) => {
         
 }
 
+const Home = ({ successLogin, user, boards, stages, tasks, showReply, tboard }) => {
 
-const Boards = ({ board, tboard, showReply, successLogin, user}) => {
-
-const boardComponent =  board.map ( (item, index) => {
-    const count = (item.id).toString();
-    const tall = item.name;
-    const guion = "-";
-    const res = count.concat(guion,tall);
-    const path = "/boards/" + (index + 1) + '-' + item.name;
-    return <User
-        key = {index}
-        ide={res}
-        name={item.name}
-        linkuser={path}
-        index={index}
-       />
-  })
-
-   return (
-       <div id='main_container'>
-       <div>
-            <div id='authentication_container' className='application-container'>
-                <Header />
-                <div className='main-container'>
+    let list = null;
+    if (boards)
+        list = boards.map((board, index) => {
+            return(
+                <div key={index} className="board">
+                    <div className="inner">
+                        <h4><NavLink onClick={() => { setView(index) }} to="/details/">{board.title}</NavLink></h4>
+                    </div>
+                </div>
+            );
+        })
+    return (
+        <div id='main_container'>
+            <div>
+                <div id='authentication_container' className='application-container'>
+                    <Header />
+                    <div className='main-container'>
                         <div className="view-container boards index">
                             <section>
-                            <header className="view-header" >
-                                <h3><i className="fa fa-user"></i><span> My boards</span></h3>
+                                <header className="view-header" >
+                                    <h3><i className="fa fa-user"></i><span> My boards</span></h3>
                                 </header>
                                 <div className="boards-wrapper">
-                                    {boardComponent}
+                                    {list}
+                                    {
+                                        !successLogin && <Redirect to="/signin" />
+                                    }
+                                    <LoginButton databoard={this.boardInputRef} userID={user.id} showReply={showReply} />
                                     <LogoutButton showReply={showReply} />
-                                    <LoginButton showReply={showReply} /> 
                                 </div>
                             </section>
                             <Usertwo tboard={tboard} />
                         </div>
+                    </div>
                 </div>
             </div>
+            <Footer />
         </div>
-        <Footer />
-       </div>
-   );
-};
+    )
+}
 
-const mapToProps = ({ board, tboard, showReply }) => ({ board, tboard, showReply});
-export default connect(mapToProps)(Boards);
+const mapToProps = ({ successLogin, user, boards, stages, tasks, showReply, tboard }) => ({ successLogin, user, boards, stages, tasks, showReply, tboard })
+export default connect(mapToProps)(Home) 

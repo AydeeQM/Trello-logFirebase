@@ -1,12 +1,21 @@
 import createStore from 'redux-zero';
-import { board, tboard } from './Databoards'
+import {tboard } from './Databoards'
 
 const initialState = {
-    board: board,
     tboard: tboard,
-    user: '',
+    user: {
+        id: null,
+        email: null,
+        fullname: null,
+        lastname:null,
+        password:null
+    },
+    boards: null,
+    stages: null,
+    tasks: null,
     idBoard: 0,
-    showReply: false
+    showReply: false,
+    successLogin: false,
 };
 
 const store = createStore(initialState);
